@@ -173,8 +173,8 @@
 //  STORAGE LAYER  (human-readable JSON; localStorage by default,
 //  or a user-chosen local file via the File System Access API)
 // ─────────────────────────────────────────────────────────────
-const DB_KEY = 'tgippfm_db';
-const DB_HANDLE_META_KEY = 'tgippfm_db_handle_meta'; // just remembers the chosen file's name for display
+const DB_KEY = 'vaultflow_db';
+const DB_HANDLE_META_KEY = 'vaultflow_db_handle_meta'; // just remembers the chosen file's name for display
 
 let dbFileHandle = null;   // FileSystemFileHandle, when user picked a custom location
 let dbFileName = null;     // display name of chosen file, or null = browser storage
@@ -214,7 +214,7 @@ async function chooseNewDBLocation() {
   }
   try {
     const handle = await window.showSaveFilePicker({
-      suggestedName: 'tgippfm_data.json',
+      suggestedName: 'vaultflow_data.json',
       types: [{ description: 'JSON Database', accept: { 'application/json': ['.json'] } }]
     });
     dbFileHandle = handle;
@@ -283,7 +283,7 @@ const CURRENCIES = {
 function getUserPrefs() {
   const u = state.currentUser;
   return {
-    currency: (u && u.defaultCurrency) || 'EUR',
+    currency: (u && u.defaultCurrency) || 'USD',
     dateFormat: (u && u.dateFormat) || 'YYYY-MM-DD',
   };
 }
@@ -294,7 +294,7 @@ function getUserPrefs() {
 const fmt = (n, currencyCode) => {
   if (n == null) return '—';
   const code = currencyCode || getUserPrefs().currency;
-  const info = CURRENCIES[code] || CURRENCIES.EUR;
+  const info = CURRENCIES[code] || CURRENCIES.USD;
   try {
     return new Intl.NumberFormat(info.locale, { style: 'currency', currency: code }).format(n);
   } catch (e) {
@@ -343,7 +343,7 @@ function getLast6Months() {
 
 function hashPass(pass) {
   // Simple hash for demo (bcrypt not available as module in browser)
-  return btoa(encodeURIComponent(pass + '::tgippfm::salt'));
+  return btoa(encodeURIComponent(pass + '::vaultflow::salt'));
 }
 function checkPass(pass, hash) {
   return hashPass(pass) === hash;
@@ -355,7 +355,7 @@ const PALETTE = ['#6c63ff','#34d399','#f87171','#fbbf24','#60a5fa','#fb923c','#a
 // ─────────────────────────────────────────────────────────────
 //  LOGGING  (in-memory + persisted, viewable in Preferences)
 // ─────────────────────────────────────────────────────────────
-const LOG_KEY = 'tgippfm_logs';
+const LOG_KEY = 'vaultflow_logs';
 const MAX_LOGS = 500;
 let appLogs = [];
 try { appLogs = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch(e) { appLogs = []; }
@@ -370,7 +370,7 @@ function logEvent(level, message, data) {
   appLogs.push(entry);
   if (appLogs.length > MAX_LOGS) appLogs = appLogs.slice(-MAX_LOGS);
   try { localStorage.setItem(LOG_KEY, JSON.stringify(appLogs)); } catch(e) {}
-  const tag = '[Tgippfm]';
+  const tag = '[VaultFlow]';
   if (level === 'error') console.error(tag, message, data);
   else if (level === 'warn') console.warn(tag, message, data);
   else console.log(tag, message, data);
@@ -2096,7 +2096,7 @@ function exportAllXLS() {
   });
 
   if (!wb.SheetNames.length) { logEvent('warn', 'exportAllXLS: no accounts to export'); alert('No accounts to export yet.'); return; }
-  XLSX.writeFile(wb, `tgippfm_export_${today()}.xlsx`);
+  XLSX.writeFile(wb, `vaultflow_export_${today()}.xlsx`);
   logEvent('info', 'Global XLSX export completed', { sheets: wb.SheetNames.length });
 }
 
@@ -2153,7 +2153,7 @@ function toggleLogView() {
 
 function downloadLogs() {
   const lines = appLogs.map(l => `${l.ts}\t${l.level.toUpperCase()}\t${l.message}${l.data?'\t'+l.data:''}`).join('\n');
-  downloadFile(`tgippfm_log_${today()}.txt`, lines, 'text/plain');
+  downloadFile(`vaultflow_log_${today()}.txt`, lines, 'text/plain');
   logEvent('info', 'Log downloaded by user');
 }
 
