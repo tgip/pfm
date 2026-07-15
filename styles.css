@@ -145,3 +145,9 @@ select option { background:var(--surface2); }
 .sortable-th:hover { color:var(--accent2); }
 .btn:disabled, .icon-btn:disabled { opacity:.4; cursor:not-allowed; }
 .btn:disabled:hover, .icon-btn:disabled:hover { border-color:var(--border); color:var(--text2); }
+.chart-total {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--text);
+	margin-bottom: 10px;
+	}
