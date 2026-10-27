@@ -1,4 +1,5 @@
 Personal Finance Manager (PFM)
+V1.0
 
 Generic JavaScript bank manager.
 
